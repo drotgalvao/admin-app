@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { createProducts, resetState } from "../features/product/productSlice";
 import { toast } from "react-toastify";
 
+
+
 let schema = Yup.object().shape({
   title: Yup.string().required("Titulo é obrigatório"),
   description: Yup.string().required("Descrição é obrigatória"),
