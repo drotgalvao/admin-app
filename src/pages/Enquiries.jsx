@@ -1,10 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BiEdit } from "react-icons/bi";
-import { AiFillDelete } from "react-icons/ai";
-import { getEnquiries } from "../features/enquiry/enquirySlice";
+import { AiFillDelete, AiOutlineEye } from "react-icons/ai";
+import {
+  deleteAEnquiry,
+  getEnquiries,
+  resetState,
+  updateAEnquiry,
+} from "../features/enquiry/enquirySlice";
+import CustomModal from "../components/CustomModal";
 
 const columns = [
   {
@@ -39,7 +45,19 @@ const columns = [
 
 const Enquiries = () => {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [enqId, setenqId] = useState("");
+  const showModal = (e) => {
+    setOpen(true);
+    setenqId(e);
+  };
+
+  const hideModal = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
+    dispatch(resetState());
     dispatch(getEnquiries());
   }, []);
   const enquiryState = useSelector((state) => state.enquiry.enquiries);
@@ -51,22 +69,60 @@ const Enquiries = () => {
       email: enquiryState[i].email,
       mobile: enquiryState[i].mobile,
       status: (
-        <div className="d-flex gap-3">
-          <select name="" className="form-control form-select" id="">
-            <option value="">Definir Status</option>
+        <>
+          <select
+            name=""
+            defaultValue={
+              enquiryState[i].status ? enquiryState[i].status : "Submetido"
+            }
+            className="form-control form-select"
+            id=""
+            onChange={(e) =>
+              setEnquiryStatus(e.target.value, enquiryState[i]._id)
+            }
+          >
+            <option value="Submetido">Submetido</option>
+            <option value="Contactado">Contactado</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Resolvido">Resolvido</option>
           </select>
-        </div>
+        </>
       ),
       date: enquiryState[i].createdAt,
       action: (
-        <div className="d-flex gap-3">
-          <Link>
-            <AiFillDelete className="fs-4" />
+        <>
+          <Link
+            className="ms-3 fs-3 text-danger"
+            to={`/admin/perguntas/${enquiryState[i]._id}`}
+          >
+            <AiOutlineEye />
           </Link>
-        </div>
+          <button
+            className="ms-3 fs-3 text-danger bg-transparent border-0"
+            onClick={() => {
+              showModal(enquiryState[i]._id);
+            }}
+          >
+            <AiFillDelete />
+          </button>
+        </>
       ),
     });
   }
+
+  const setEnquiryStatus = (e, i) => {
+    console.log(e, i);
+    const data = { id: i, enqData: e };
+    dispatch(updateAEnquiry(data));
+  };
+
+  const deleteEnq = (e) => {
+    dispatch(deleteAEnquiry(e));
+    setOpen(false);
+    setTimeout(() => {
+      dispatch(getEnquiries());
+    }, 100);
+  };
 
   return (
     <div>
@@ -74,6 +130,12 @@ const Enquiries = () => {
       <div>
         <Table columns={columns} dataSource={data1} />
       </div>
+      <CustomModal
+        hideModal={hideModal}
+        open={open}
+        performAction={() => deleteEnq(enqId)}
+        title="Você tem certeza que deseja excluir esta pergunta?"
+      />
     </div>
   );
 };

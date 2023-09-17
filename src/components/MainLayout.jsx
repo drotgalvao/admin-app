@@ -5,6 +5,7 @@ import {
   AiOutlineUser,
   AiOutlineBgColors,
 } from "react-icons/ai";
+import { RiCouponLine } from "react-icons/ri";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Outlet, Link } from "react-router-dom";
@@ -30,7 +31,7 @@ const MainLayout = () => {
         <div className="logo">
           <h2 className="text-white fs-5 text-center py-3 mb-0">
             <span className="sm-logo">VTX</span>
-            <span className="lg-logo">Vetuxe</span>
+            <span className="lg-logo">VTX</span>
           </h2>
         </div>
         <Menu
@@ -107,6 +108,23 @@ const MainLayout = () => {
               label: "Pedidos",
             },
             {
+              key: "marketing",
+              icon: <RiCouponLine className="fs-4" />,
+              label: "Marketing",
+              children: [
+                {
+                  key: "cupom",
+                  icon: <ImBlog className="fs-4" />,
+                  label: "Adicionar Cupom",
+                },
+                {
+                  key: "cupom-lista",
+                  icon: <RiCouponLine className="fs-4" />,
+                  label: "Lista de Cupons",
+                },
+              ],
+            },
+            {
               key: "blogs",
               icon: <FaBloggerB className="fs-4" />,
               label: "Blogs",
@@ -141,7 +159,7 @@ const MainLayout = () => {
           ]}
         />
       </Sider>
-      <Layout>
+      <Layout className="site-layout">
         <Header
           className="d-flex justify-content-between ps-1 pe-5"
           style={{

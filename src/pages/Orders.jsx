@@ -39,6 +39,7 @@ const Orders = () => {
     dispatch(getOrders());
   }, []);
   const orderState = useSelector((state) => state.auth.orders);
+  console.log(orderState);
   const data1 = [];
   for (let i = 0; i < orderState.length; i++) {
     const isoDateString = orderState[i].createdAt;
@@ -56,13 +57,18 @@ const Orders = () => {
     data1.push({
       key: i + 1,
       name: orderState[i].orderBy.firstname,
-      product: orderState[i].products.map((i, j) => {
-        return (
-          <ul key={j}>
-            <li>{i.product.title}</li>
-          </ul>
-        );
-      }),
+      product: (
+        <Link to={`/admin/pedidos/${orderState[i]._id}`}>
+          Ver Ordens
+        </Link>
+      ),
+      // product: orderState[i].products.map((i, j) => {
+      //   return (
+      //     <ul key={j}>
+      //       <li>{i.product.title}</li>
+      //     </ul>
+      //   );
+      // }),
       amount: orderState[i].paymentIntent.amount,
       date: formattedDate,
       status: orderState[i].status,
@@ -71,7 +77,7 @@ const Orders = () => {
           <Link to="/" className="fs-3 text-danger">
             <BiEdit />
           </Link>
-          <Link className="ms-3 fs-3 text-danger">
+          <Link className="ms-3 fs-3 text-danger" to="/">
             <AiFillDelete />
           </Link>
         </>

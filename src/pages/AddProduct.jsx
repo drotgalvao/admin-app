@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { React, useEffect, useState } from "react";
 import CustomInput from "../components/CustomInput";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { getBrands } from "../features/brand/brandSlice";
-import { getPcategories } from "../features/pcategory/pcategorySlice";
+import { getCategories } from "../features/pcategory/pcategorySlice";
 import { getColors } from "../features/color/colorSlice";
 import { Select } from "antd";
 import "react-widgets/styles.css";
@@ -39,12 +39,12 @@ const AddProduct = () => {
 
   useEffect(() => {
     dispatch(getBrands());
-    dispatch(getPcategories());
+    dispatch(getCategories());
     dispatch(getColors());
   }, []);
 
   const brandState = useSelector((state) => state.brand.brands);
-  const pcategoryState = useSelector((state) => state.pcategory.pcategories);
+  const pcategoryState = useSelector((state) => state.pcategory.pCategories);
   const colorState = useSelector((state) => state.color.colors);
   const imgState = useSelector((state) => state.upload.images);
   const newProduct = useSelector((state) => state.product);
@@ -101,7 +101,6 @@ const AddProduct = () => {
   });
   const handleColors = (e) => {
     setColor(e);
-    console.log(color);
   };
 
   return (

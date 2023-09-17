@@ -9,8 +9,19 @@ const login = async (userData) => {
   }
   return response.data;
 };
+
 const getOrders = async () => {
   const response = await axios.get(`${base_url}user/get-all-orders`, config);
+
+  return response.data;
+};
+
+const getOrder = async (id) => {
+  const response = await axios.post(
+    `${base_url}user/get-order-by-user/${id}`,
+    "",
+    config
+  );
 
   return response.data;
 };
@@ -18,6 +29,7 @@ const getOrders = async () => {
 const authService = {
     login,
     getOrders,
+    getOrder
 };
 
 export default authService;

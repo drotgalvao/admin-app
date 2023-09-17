@@ -44,7 +44,7 @@ const Customers = () => {
 
   return (
     <div>
-      <h3 className="mb-4 title title">Clientes</h3>
+      <h3 className="mb-4 title">Clientes</h3>
       <div>
         <Table columns={columns} dataSource={data1} />
       </div>

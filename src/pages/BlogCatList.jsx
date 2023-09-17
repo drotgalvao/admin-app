@@ -1,10 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
-import { getBcategories } from "../features/bcategory/bcategorySlice";
+import {
+  deleteABlogCat,
+  getBcategories,
+  resetState,
+} from "../features/bcategory/bcategorySlice";
+import CustomModal from "../components/CustomModal";
 
 const columns = [
   {
@@ -12,16 +17,9 @@ const columns = [
     dataIndex: "key",
   },
   {
-    title: "Titulo",
-    dataIndex: "title",
-  },
-  {
-    title: "Produto",
-    dataIndex: "product",
-  },
-  {
-    title: "Situação",
-    dataIndex: "status",
+    title: "Nome",
+    dataIndex: "name",
+    sorter: (a, b) => a.name.length - b.name.length,
   },
   {
     title: "Ações",
@@ -30,8 +28,19 @@ const columns = [
 ];
 
 const BlogCatList = () => {
+  const [open, setOpen] = useState(false);
+  const [blogCatId, setblogCatId] = useState("");
+  const showModal = (e) => {
+    setOpen(true);
+    setblogCatId(e);
+  };
+  const hideModal = () => {
+    setOpen(false);
+  };
+
   const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(resetState());
     dispatch(getBcategories());
   }, []);
   const bcategoryState = useSelector((state) => state.bcategory.bcategories);
@@ -39,19 +48,33 @@ const BlogCatList = () => {
   for (let i = 0; i < bcategoryState.length; i++) {
     data1.push({
       key: i + 1,
-      title: bcategoryState[i].title,
-      product: bcategoryState[i].product,
-      status: bcategoryState[i].status,
+      name: bcategoryState[i].title,
       action: (
-        <div className="d-flex gap-3">
-          <Link to={`/admin/blog/edit/${bcategoryState[i]._id}`}>
-            <BiEdit className="fs-4" />
+        <>
+          <Link
+            to={`/admin/blog/edit/${bcategoryState[i]._id}`}
+            className="fs-3 text-danger"
+          >
+            <BiEdit />
           </Link>
-          <AiFillDelete className="fs-4" />
-        </div>
+          <button
+            className="ms-3 fs-3 text-danger bg-transparent border-0"
+            onClick={() => showModal(bcategoryState[i]._id)}
+          >
+           <AiFillDelete /> 
+          </button>
+        </>
       ),
     });
   }
+
+  const deleteBlogCategory = (e) => {
+    dispatch(deleteABlogCat(e));
+    setOpen(false);
+    setTimeout(() => {
+      dispatch(getCategories());
+    }, 100);
+  };
 
   return (
     <div>
@@ -59,6 +82,12 @@ const BlogCatList = () => {
       <div>
         <Table columns={columns} dataSource={data1} />
       </div>
+      <CustomModal
+        hideModal={hideModal}
+        open={open}
+        performAction={() => deleteBlogCategory(blogCatId)}
+        title="Você tem certeza que deseja excluir essa categoria de blog?"
+      />
     </div>
   );
 };
