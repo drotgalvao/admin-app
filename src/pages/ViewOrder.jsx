@@ -48,8 +48,16 @@ const ViewOrder = () => {
   useEffect(() => {
     dispatch(getOrderByUser(userId));
   }, []);
-  const orderState = useSelector((state) => state.auth.orders[0].products); // orderbyuser[i].p
-  console.log(orderState);
+  // const orderState = useSelector((state) => state.auth.orderbyuser[0].products);
+  
+  const orderState = useSelector((state) => {
+    if (state.auth.orderbyuser && state.auth.orderbyuser.length > 0) {
+      return state.auth.orderbyuser[0].products;
+    } else {
+      return [];
+    }
+  });
+
   const data1 = [];
   for (let i = 0; i < orderState.length; i++) {
     data1.push({
