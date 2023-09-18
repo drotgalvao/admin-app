@@ -5,6 +5,7 @@ import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import { getOrderByUser, getOrders } from "../features/auth/authSlice";
+import { getColors } from "../features/color/colorSlice";
 const columns = [
   {
     title: "Numero Serial",
@@ -25,6 +26,18 @@ const columns = [
   {
     title: "Cor",
     dataIndex: "color",
+    render: (color) => (
+      <span
+        style={{
+          backgroundColor: color,
+          padding: "4px 8px",
+          borderRadius: "4px",
+          border: "1px solid black",
+        }}
+      >
+        {color}
+      </span>
+    )
   },
   {
     title: "Preço",
@@ -47,8 +60,8 @@ const ViewOrder = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getOrderByUser(userId));
+    dispatch(getColors())
   }, []);
-  // const orderState = useSelector((state) => state.auth.orderbyuser[0].products);
   
   const orderState = useSelector((state) => {
     if (state.auth.orderbyuser && state.auth.orderbyuser.length > 0) {
@@ -66,7 +79,7 @@ const ViewOrder = () => {
       brand: orderState[i].product.brand,
       count: orderState[i].count,
       amount: orderState[i].product.price,
-      color: orderState[i].product.color,
+      color: orderState[i].color.title,
       date: orderState[i].product.createdAt,
       action: (
         <>
