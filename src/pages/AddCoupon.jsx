@@ -35,12 +35,19 @@ let schema = yup.object().shape({
       couponExpiry,
       updatedCoupon,
     } = newCoupon;
-    const changeDateFormet = (date) => {
-      const newDate = new Date(date).toLocaleDateString();
-      const [month, day, year] = newDate.split("/");
-      return [year, month, day].join("-");
+    const changeDateFormat = (date) => {
+      if (!date || date === "-Invalid Date-") {
+        return ""; // Retornar uma string vazia para evitar o erro
+      }
+      
+      const newDate = new Date(date);
+      const day = String(newDate.getDate()).padStart(2, '0'); // Dia com dois dígitos
+      const month = String(newDate.getMonth() + 1).padStart(2, '0'); // Mês com dois dígitos (lembrando que janeiro é 0)
+      const year = newDate.getFullYear();
+    
+      return `${day}/${month}/${year}`;
     };
-  
+
     useEffect(() => {
       if (getCouponId !== undefined) {
         dispatch(getACoupon(getCouponId));
@@ -65,7 +72,7 @@ let schema = yup.object().shape({
       enableReinitialize: true,
       initialValues: {
         name: couponName || "",
-        expiry: changeDateFormet(couponExpiry) || "",
+        expiry: changeDateFormat(couponExpiry) || "",
         discount: couponDiscount || "",
       },
       validationSchema: schema,
@@ -97,7 +104,7 @@ let schema = yup.object().shape({
               onChng={formik.handleChange("name")}
               onBlr={formik.handleBlur("name")}
               val={formik.values.name}
-              label="Enter Coupon Name"
+              label="Nome do Cupom"
               id="name"
             />
             <div className="error">
@@ -108,8 +115,8 @@ let schema = yup.object().shape({
               name="expiry"
               onChng={formik.handleChange("expiry")}
               onBlr={formik.handleBlur("expiry")}
-              val={formik.values.expiry}
-              label="Enter Expiry Data"
+              val={formik.values.expiry || ""}
+              label="Data de Expiração do Cupom"
               id="date"
             />
             <div className="error">
@@ -121,7 +128,7 @@ let schema = yup.object().shape({
               onChng={formik.handleChange("discount")}
               onBlr={formik.handleBlur("discount")}
               val={formik.values.discount}
-              label="Enter Discount"
+              label="Desconto do Cupom"
               id="discount"
             />
             <div className="error">
