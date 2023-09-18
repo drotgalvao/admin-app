@@ -1,7 +1,5 @@
 import { React, useEffect, useState } from "react";
 import CustomInput from "../components/CustomInput";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { createProducts, resetState } from "../features/product/productSlice";
 import { toast } from "react-toastify";
 
-
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 let schema = Yup.object().shape({
   title: Yup.string().required("Titulo é obrigatório"),
@@ -123,11 +122,16 @@ const AddProduct = () => {
             {formik.touched.title && formik.errors.title}
           </div>
           <div className="">
-            <ReactQuill
-              theme="snow"
-              name="description"
-              onChange={formik.handleChange("description")}
-              value={formik.values.description}
+            <CKEditor
+              editor={ClassicEditor}
+              data={formik.values.description}
+              onReady={(editor) => {
+                // Opcional: Configurações adicionais do editor, se necessário
+              }}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                formik.setFieldValue("description", data);
+              }}
             />
           </div>
           <div className="error">
