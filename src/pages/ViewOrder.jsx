@@ -6,6 +6,8 @@ import { AiFillDelete } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import { getOrderByUser, getOrders } from "../features/auth/authSlice";
 import { getColors } from "../features/color/colorSlice";
+import { createSelector } from 'reselect';
+
 const columns = [
   {
     title: "Numero Serial",
@@ -63,13 +65,22 @@ const ViewOrder = () => {
     dispatch(getColors())
   }, []);
   
-  const orderState = useSelector((state) => {
+  const selectProducts = (state) => {
     if (state.auth.orderbyuser && state.auth.orderbyuser.length > 0) {
       return state.auth.orderbyuser[0].products;
     } else {
       return [];
     }
-  });
+  };
+  
+  // Crie um seletor memorizado usando createSelector
+  const memoizedSelectProducts = createSelector(
+    [selectProducts],
+    (products) => products
+  );
+  
+  // Em seguida, use memoizedSelectProducts no seu componente
+  const orderState = useSelector(memoizedSelectProducts);
 
   const data1 = [];
   for (let i = 0; i < orderState.length; i++) {
