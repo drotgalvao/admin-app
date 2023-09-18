@@ -1,7 +1,5 @@
 import { React, useEffect, useState } from "react";
 import CustomInput from "../components/CustomInput";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import Dropzone from "react-dropzone";
 import { deleteImg, uploadImg } from "../features/upload/uploadSlice";
 import { toast } from "react-toastify";
@@ -16,6 +14,9 @@ import {
   updateABlog,
 } from "../features/blogs/blogSlice";
 import { getBcategories } from "../features/bcategory/bcategorySlice";
+
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 let schema = yup.object().shape({
   title: yup.string().required("Titulo é Obrigatório"),
@@ -76,7 +77,6 @@ const AddBlog = () => {
       url: i.url,
     });
   });
-  console.log(img);
   useEffect(() => {
     formik.values.images = img;
   }, [blogImages]);
@@ -146,17 +146,23 @@ const AddBlog = () => {
           <div className="error">
             {formik.touched.category && formik.errors.category}
           </div>
-          <ReactQuill
-            theme="snow"
-            className="mt-3"
-            name="description"
-            onChange={formik.handleChange("description")}
-            value={formik.values.description}
-          />
+          <div className="mt-3">
+            <CKEditor
+              editor={ClassicEditor}
+              data={formik.values.description}
+              onReady={(editor) => {
+                // Opcional: Configurações adicionais do editor, se necessário
+              }}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                formik.setFieldValue("description", data);
+              }}
+            />
+          </div>
           <div className="error">
             {formik.touched.description && formik.errors.description}
           </div>
-          
+
           <div className="bg-white border-1 p-5 text-center mt-3">
             <Dropzone
               onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
@@ -165,9 +171,7 @@ const AddBlog = () => {
                 <section>
                   <div {...getRootProps()}>
                     <input {...getInputProps()} />
-                    <p>
-                      Solte o(s) arquivo(s) aqui ou clique para adicionar
-                    </p>
+                    <p>Solte o(s) arquivo(s) aqui ou clique para adicionar</p>
                   </div>
                 </section>
               )}
@@ -189,7 +193,6 @@ const AddBlog = () => {
               );
             })}
           </div>
-
 
           <button
             className="btn btn-success border-0 rounded-3 my-5"
